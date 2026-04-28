@@ -1,10 +1,44 @@
 #include "DshotAnalyzer.h"
 #include "DshotAnalyzerSettings.h"
+#include "magic_enum.hpp"
 #include <AnalyzerChannelData.h>
 #include <AnalyzerHelpers.h>
 
 #include <stdint.h>
 #include <cstdio>
+
+// this typedef taken from src\main\drivers\pwm_output.h in the betaflight github page
+enum class dshotCommands_e
+{
+    DSHOT_CMD_MOTOR_STOP = 0,
+    DSHOT_CMD_BEACON1,
+    DSHOT_CMD_BEACON2,
+    DSHOT_CMD_BEACON3,
+    DSHOT_CMD_BEACON4,
+    DSHOT_CMD_BEACON5,
+    DSHOT_CMD_ESC_INFO, // V2 includes settings
+    DSHOT_CMD_SPIN_DIRECTION_1,
+    DSHOT_CMD_SPIN_DIRECTION_2,
+    DSHOT_CMD_3D_MODE_OFF,
+    DSHOT_CMD_3D_MODE_ON,
+    DSHOT_CMD_SETTINGS_REQUEST, // Currently not implemented
+    DSHOT_CMD_SAVE_SETTINGS,
+    DSHOT_CMD_SPIN_DIRECTION_NORMAL = 20,
+    DSHOT_CMD_SPIN_DIRECTION_REVERSED = 21,
+    DSHOT_CMD_LED0_ON,                       // BLHeli32 only
+    DSHOT_CMD_LED1_ON,                       // BLHeli32 only
+    DSHOT_CMD_LED2_ON,                       // BLHeli32 only
+    DSHOT_CMD_LED3_ON,                       // BLHeli32 only
+    DSHOT_CMD_LED0_OFF,                      // BLHeli32 only
+    DSHOT_CMD_LED1_OFF,                      // BLHeli32 only
+    DSHOT_CMD_LED2_OFF,                      // BLHeli32 only
+    DSHOT_CMD_LED3_OFF,                      // BLHeli32 only
+    DSHOT_CMD_AUDIO_STREAM_MODE_ON_OFF = 30, // KISS audio Stream mode on/Off
+    DSHOT_CMD_SILENT_MODE_ON_OFF = 31,       // KISS silent Mode on/Off
+    DSHOT_CMD_SIGNAL_LINE_TELEMETRY_DISABLE = 32,
+    DSHOT_CMD_SIGNAL_LINE_CONTINUOUS_ERPM_TELEMETRY = 33,
+    DSHOT_CMD_MAX = 47
+};
 
 DshotAnalyzer::DshotAnalyzer() : Analyzer2(), mSettings( new DshotAnalyzerSettings() ), mSimulationInitilized( false )
 {
@@ -121,7 +155,18 @@ void DshotAnalyzer::WorkerThread()
         FrameV2 frame_v2;
         // you can add any number of key value pairs. Each will get it's own column in the data table.
         frame_v2.AddInteger( "channel", frame.mData1 );
-        frame_v2.AddInteger( "data", data );
+        if( chan >= 0 && chan < 48 )
+        {
+            auto dshot_cmd = magic_enum::enum_cast<dshotCommands_e>( chan );
+            if( dshot_cmd.has_value() )
+            {
+                frame_v2.AddString( "CMD", std::string{ magic_enum::enum_name( dshot_cmd.value() ) }.c_str() );
+            }
+            else
+            {
+                frame_v2.AddString( "CMD", "UNKNOWN" );
+            }
+        }
         // This actually saves your new FrameV2. In this example, we just copy the same start and end sample number from Frame V1 above.
         // The second parameter is the frame "type". Any string is allowed.
         mResults->AddFrameV2( frame_v2, "DSHOT", frame.mStartingSampleInclusive, frame.mEndingSampleInclusive );

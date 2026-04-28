@@ -23,6 +23,7 @@ src/DshotAnalyzerSettings.cpp
 src/DshotAnalyzerSettings.h
 src/DshotSimulationDataGenerator.cpp
 src/DshotSimulationDataGenerator.h
+src/magic_enum.hpp
 )
 
 add_analyzer_plugin(${PROJECT_NAME} SOURCES ${SOURCES})

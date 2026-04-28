@@ -37,6 +37,7 @@ class ANALYZER_EXPORT DshotAnalyzer : public Analyzer2
     double proportionOfBit( U32 width );
 };
 
+
 extern "C" ANALYZER_EXPORT const char* __cdecl GetAnalyzerName();
 extern "C" ANALYZER_EXPORT Analyzer* __cdecl CreateAnalyzer();
 extern "C" ANALYZER_EXPORT void __cdecl DestroyAnalyzer( Analyzer* analyzer );
