@@ -1,6 +1,2 @@
-debug
-deploy
-release
-include
-lib
-
+/build
+.DS_Store
