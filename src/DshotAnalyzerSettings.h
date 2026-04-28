@@ -4,23 +4,22 @@
 #include <AnalyzerSettings.h>
 #include <AnalyzerTypes.h>
 
-class DshotAnalyzerSettings : public AnalyzerSettings
-{
-public:
-	DshotAnalyzerSettings();
-	virtual ~DshotAnalyzerSettings();
+class DshotAnalyzerSettings : public AnalyzerSettings {
+ public:
+  DshotAnalyzerSettings();
+  virtual ~DshotAnalyzerSettings();
 
-	virtual bool SetSettingsFromInterfaces();
-	void UpdateInterfacesFromSettings();
-	virtual void LoadSettings( const char* settings );
-	virtual const char* SaveSettings();
+  virtual bool SetSettingsFromInterfaces();
+  void UpdateInterfacesFromSettings();
+  virtual void LoadSettings(const char* settings);
+  virtual const char* SaveSettings();
 
-	Channel mInputChannel;
-	U32 mDshotRate;
+  Channel mInputChannel;
+  U32 mDshotRate;
 
-protected:
-	std::unique_ptr< AnalyzerSettingInterfaceChannel >	mInputChannelInterface;
-	std::unique_ptr< AnalyzerSettingInterfaceNumberList >	mDshotRateInterface;
+ protected:
+  std::unique_ptr<AnalyzerSettingInterfaceChannel> mInputChannelInterface;
+  std::unique_ptr<AnalyzerSettingInterfaceNumberList> mDshotRateInterface;
 };
 
-#endif //DSHOT_ANALYZER_SETTINGS
+#endif  //DSHOT_ANALYZER_SETTINGS
